@@ -20,7 +20,6 @@ IDENT = "    "
 } = require "wml2wsl.parse.util"
 
 
-
 ------------------- literals
 
 White = S" \t\r\n"^0
@@ -75,32 +74,32 @@ simple_string = (delim, allow_interpolation) ->
     symx(delim) * C(inner) * sym(delim) / mark_value"string"
 
 
-
-
-
-
-
-
 Space = plain_space
 
-Variable = (sym"$" * (Name / mark_value"variable") * sym"|"^0) -- / mark2("type", variable)
+Variable = sym"$" * (Name / mark_value"variable") * sym"|"^0
 
 DoubleString = Space * simple_string('"')
 TString = (Space * sym"_" * Space * DoubleString) / mark2("type","tstring")
 
 Comment = Ct(Cg( plain_space * "#" * (1 - S"\r\n")^0,"comment") )^0
 
-
-notName = P(1- S",# {}")^1 -- notName = C R("az", "AZ", "__") * AlphaNum^0
+notName = P(1- S",# {}")^1
 UnquotedString = White * C(notName * (White * notName)^0) / mark_value("string")
-
 
 Number = S" "^0 * (Num / mark_value("number") ) * ( #(SomeSpace + S",}") + L(Stop) )
 
+-- Bool = "yes" + ""
+
+komisch = ->
+    (ast1, ast2) ->
+        ast1.comment = ast2.comment if ast2
+        return ast1
+
 g = P {
     "Line"
+    Line: ((V"Macro" + V"PureMacro" + V"TagStart" + V"TagEnd" + V"Attribute")^0 * Comment) * L(Stop) / komisch!
+
     Value: Number + Variable + TString + DoubleString + UnquotedString + V"PureMacro" + V"Macro"
-    Line: (V"Macro" + V"PureMacro" + V"TagStart" + V"TagEnd" + V"Attribute" )^0 * Comment * L(Stop)
 
     TagStart: (sym"["  * Name * symx"]") / mark_value("tagStart")
     TagEnd:   (sym"[/" * Name * symx"]") / mark_value("tagEnd")
@@ -110,16 +109,24 @@ g = P {
     Attribute: Ct(Space * V"KeyList" * sym"=" * V"ValueList" ) / mark2("type","attribute")
 
     PureMacro: sym"{" * (Name / mark_value"pureMacro") * sym"}"
-    Macro: ((Ct(sym"{" * Cg(Name,"name") * Space * Cg(Ct(V"Value" * (SomeSpace * V"Value")^0 ),"parameters") * sym"}")) ) / mark2("type", "macro")
-    -- Macro: ((Ct(sym"{" * Cg(Name,"name") * Space * Cg(Ct(V"Value" * (SomeSpace * V"Value")^0 ),"parameters") * sym"}")) * Comment) / mark2("type", "macro")
+    Macro: Ct(sym"{" * Cg(Name,"name") * Space * Cg(Ct(V"Value" * (SomeSpace * V"Value")^0 ),"parameters") * sym"}") / mark2("type", "macro")
 }
 
 
 level = 0
 actionContext = true
-compile = (ast) ->
+compile = (ast, ast2) ->
+
+    if ast2
+        moon.p(ast2)
+        error"we have ast2 infection!"
+
     unless ast
         return false
+
+    if type(ast) == "number"
+        print ""
+        return true
 
     -- moon.p(ast)
 
@@ -191,7 +198,7 @@ compile = (ast) ->
         when "tagStart"
             line ..= ast.value .. (if actionContext then "" else ": ") .. "{"
             level += 1
-        --     actionContext = false
+            actionContext = false
         when "tagEnd"
             level -= 1
             line ..= "}" -- .. "--" .. ast.tagEnd
@@ -205,8 +212,8 @@ compile = (ast) ->
     return true
 
 
--- file = io.open("./spec/inputs/01_Defend_the_Forest.cfg", "r")
-file = io.open("./spec/inputs/simple.cfg", "r")           --01_Defend_the_Forest.cfg", "r")
+file = io.open("./spec/inputs/01_Defend_the_Forest.cfg", "r")
+--file = io.open("./spec/inputs/simple.cfg", "r")           --01_Defend_the_Forest.cfg", "r")
 input = {}
 -- output = {}
 
@@ -221,13 +228,16 @@ for i, line in ipairs input
     -- print line .. " :>"
     -- moon.p(g\match(line))
 
-    if ast = g\match(line)
-        moon.p(ast)
-        unless compile(ast)
-            print "Compile Error at line " .. i .. ": " .. line
-            -- moon.p(ast)
-    else
-        print "Parse Error at line " .. i .. ": " .. line
+    ast, ast2 = g\match(line)
+    compile(ast, ast2)
+
+    -- if ast, ast2 = g\match(line)
+        -- moon.p(ast)
+    --     unless compile(ast, ast2)
+    --         print "Compile Error at line " .. i .. ": " .. line
+    --         -- moon.p(ast)
+    -- else
+    --     print "Parse Error at line " .. i .. ": " .. line
 
     -- table.insert(output, "#{g\match(line)}")
 
