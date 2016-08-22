@@ -2,13 +2,15 @@
 compile_line = require"compile"
 parse_line = require"parse"
 
-transcompile_line = (line) ->
+transcompile_line = (line, compiler) ->
     ast = parse_line(line)
 
-    line = compile_line(ast)
+    line = compiler(ast)
     return line
 
 transcompile_file = (input, output) ->
+
+    compiler = compile_line!
 
     print "trans compiling " .. input .. " into " .. output
 
@@ -18,7 +20,7 @@ transcompile_file = (input, output) ->
 
 
     for line in input_file\lines!
-        code = transcompile_line(line)
+        code = transcompile_line(line, compiler)
         output_file\write(code .. '\n')
 
     output_file\close!
