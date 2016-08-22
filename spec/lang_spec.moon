@@ -19,6 +19,7 @@ diff_file = (a_fname, b_fname) ->
         out = options.diff.filter out
     out
 
+
 diff_str = (expected, got) ->
     a_tmp = os.tmpname! .. ".expected"
     b_tmp = os.tmpname! .. ".got"
@@ -35,6 +36,7 @@ diff_str = (expected, got) ->
         os.remove a_tmp
         os.remove b_tmp
 
+
 inputs = for file in lfs.dir options.in_dir
     with match = file\match options.input_pattern
         continue unless match
@@ -43,9 +45,8 @@ inputs = for file in lfs.dir options.in_dir
 describe "input tests", ->
 
     for name in *inputs
-        print name
 
-        it name .. " #input", ->
+        it "#" .. name, ->
 
             tmp_file_path = os.tmpname! .. ".got"
             out_file_path = options.out_dir .. "/" .. name .. options.output_ext
@@ -53,7 +54,6 @@ describe "input tests", ->
             wml2wsl.transcompile_file(options.in_dir .. "/" .. name .. ".cfg", tmp_file_path)
 
             diff_out = diff_file(tmp_file_path, out_file_path)
-            -- diff_out = diff_file(out_file_path,tmp_file_path) 
 
             print diff_out
             assert(diff_out == '')

@@ -1,0 +1,2 @@
+MINIMUM = () ->
+--enddef

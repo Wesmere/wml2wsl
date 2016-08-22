@@ -1,0 +1,139 @@
+--textdomain wesnoth-aoi
+
+AOI_BIGMAP = () ->
+    {_merge: true, background_layer: {
+            image: "maps/background.jpg"
+            scale_vertically: true
+            scale_horizontally: false
+            keep_aspect_ratio: true
+        }
+
+        background_layer: {
+            image: "maps/aoi.png"
+            scale_vertically: true
+            scale_horizontally: false
+            keep_aspect_ratio: true
+            base_layer: true
+        }
+    }
+
+AOI_TRACK = (STAGE) ->
+    {_merge: true, story: {
+            part: {
+                show_title: true
+                AOI_BIGMAP
+                STAGE
+            }
+        }
+    }
+
+NEW_JOURNEY = nil
+
+NEW_JOURNEY = (X, Y) ->
+    {_merge: true, image: {
+            x: X, y: Y
+            file: "misc/new-journey.png"
+            delay: 300
+            centered: true
+        }
+    }
+
+JOURNEY_01_NEW = ->
+    {_merge: true, NEW_BATTLE(494, 584)
+    }
+
+JOURNEY_01_OLD = ->
+    {_merge: true, OLD_BATTLE(494, 584)
+    }
+
+JOURNEY_02_NEW = ->
+    {_merge: true, JOURNEY_01_OLD!
+        NEW_JOURNEY(479, 563)
+        NEW_JOURNEY(462, 543)
+        NEW_JOURNEY(453, 518)
+        NEW_BATTLE(463, 494)
+    }
+
+JOURNEY_02_OLD = ->
+    {_merge: true, JOURNEY_01_OLD!
+        OLD_JOURNEY(479, 563)
+        OLD_JOURNEY(462, 543)
+        OLD_JOURNEY(453, 518)
+        OLD_BATTLE(463, 494)
+    }
+
+JOURNEY_03_NEW = ->
+    {_merge: true, JOURNEY_02_OLD!
+        NEW_JOURNEY(474, 469)
+        NEW_JOURNEY(478, 442)
+        NEW_JOURNEY(477, 415)
+        NEW_BATTLE(474, 388)
+    }
+
+JOURNEY_03_OLD = ->
+    {_merge: true, JOURNEY_02_OLD!
+        OLD_JOURNEY(474, 469)
+        OLD_JOURNEY(478, 442)
+        OLD_JOURNEY(477, 415)
+        OLD_BATTLE(474, 388)
+    }
+
+JOURNEY_04_NEW = ->
+    {_merge: true, JOURNEY_03_OLD!
+        NEW_JOURNEY(483, 364)
+        NEW_JOURNEY(505, 349)
+        NEW_JOURNEY(530, 339)
+        NEW_JOURNEY(555, 330)
+        NEW_JOURNEY(580, 321)
+        NEW_JOURNEY(604, 309)
+        NEW_JOURNEY(626, 294)
+        NEW_BATTLE(638, 271)
+    }
+
+JOURNEY_04_OLD = ->
+    {_merge: true, JOURNEY_03_OLD!
+        OLD_JOURNEY(483, 364)
+        OLD_JOURNEY(505, 349)
+        OLD_JOURNEY(530, 339)
+        OLD_JOURNEY(555, 330)
+        OLD_JOURNEY(580, 321)
+        OLD_JOURNEY(604, 309)
+        OLD_JOURNEY(626, 294)
+        OLD_BATTLE(638, 271)
+    }
+
+JOURNEY_05_NEW = ->
+    {_merge: true, JOURNEY_04_OLD!
+        NEW_JOURNEY(642, 245)
+        NEW_JOURNEY(648, 220)
+        NEW_BATTLE(658, 196)
+    }
+
+JOURNEY_05_OLD = ->
+    {_merge: true, JOURNEY_04_OLD!
+        OLD_JOURNEY(642, 245)
+        OLD_JOURNEY(648, 220)
+        OLD_BATTLE(658, 196)
+    }
+
+JOURNEY_06_NEW = ->
+    {_merge: true, JOURNEY_05_OLD!
+        NEW_JOURNEY(676, 178)
+        NEW_JOURNEY(699, 169)
+        NEW_BATTLE(724, 168)
+    }
+
+JOURNEY_06_OLD = ->
+    {_merge: true, JOURNEY_05_OLD!
+        OLD_JOURNEY(676, 178)
+        OLD_JOURNEY(699, 169)
+        OLD_BATTLE(724, 168)
+    }
+
+JOURNEY_07_NEW = ->
+    {_merge: true, JOURNEY_06_OLD!
+        NEW_JOURNEY(753, 176)
+        NEW_JOURNEY(781, 185)
+        NEW_JOURNEY(811, 180)
+        NEW_BATTLE(838, 167)
+    }

@@ -1,0 +1,3 @@
+scenario{
+    type: "Elvish Rider"
+}
